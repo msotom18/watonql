@@ -244,7 +244,7 @@ function pickFood(id) {
     ${f.zero ? `<div class="label">¿La bebida fue zero?</div><div class="chips">${chip('Bebida normal', !pick.zero, `setPick('zero',false,this)`)}${chip('Zero / light', pick.zero, `setPick('zero',true,this)`)}</div>` : ''}
     <div class="label">${drink ? 'Tamaño' : 'Porción'}</div><div class="chips">${portions(f).map(([u], i) => chip(esc(u), !i, `setPick('por',${i},this)`)).join('')}</div>
     <div class="label">${drink ? '¿Cuántos?' : 'Cantidad'}</div><div class="chips">${qtyChips}<input type="number" class="mini" min="0" step="0.5" placeholder="otra" inputmode="decimal" oninput="this.parentNode.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));setPick('qty',+this.value||0)"></div>
-    ${drink ? '' : `<div class="label">Tamaño (al ojo)</div><div class="chips">${SIZES.map(([l, v]) => chip(l, v === 1, `setPick('size',${v},this)`)).join('')}</div>`}`) + `
+    ${drink || f.code ? '' : `<div class="label">Tamaño (al ojo)</div><div class="chips">${SIZES.map(([l, v]) => chip(l, v === 1, `setPick('size',${v},this)`)).join('')}</div>`}`) + `
     <div class="label">Comida</div><div class="chips">${MEALS.map(([m, l]) => chip(l, m === fMeal, `fMeal='${m}';setOn(this)`)).join('')}</div>
     <div class="preview" id="pv"></div>
     <button class="btn" onclick="addPicked()">Agregar</button>
