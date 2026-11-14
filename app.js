@@ -2,7 +2,7 @@
 const KEY = 'watonql.v1';
 let S;
 try { S = JSON.parse(localStorage.getItem(KEY)) || {}; } catch { S = {}; }
-S.days ||= {}; S.custom ||= []; S.weights ||= [];
+S.days ||= {}; S.custom ||= []; S.weights ||= []; S.combos ||= [];
 const save = () => localStorage.setItem(KEY, JSON.stringify(S));
 
 // ---------- Utilidades ----------
@@ -107,12 +107,22 @@ function viewHoy() {
   </section>
   <section class="card">${macro('Proteína', t.eat.p, pG, 'p')}${macro('Carbohidratos', t.eat.c, cG, 'c')}${macro('Grasas', t.eat.f, fG, 'f')}</section>`;
 
+  const daysLogged = Object.values(S.days).filter(D => D.foods.length).length;
+  const sinceBk = S.lastBackup ? dayDiff(S.lastBackup, TODAY()) : null;
+  if (daysLogged >= 3 && (sinceBk === null || sinceBk >= 7)) {
+    h += `<section class="card warn"><div class="row"><div class="grow">💾 ${sinceBk === null ? 'Aún no respaldas tus datos' : `Hace ${sinceBk} días que no respaldas`}<div class="small muted">Si borras el navegador o cambias de celular, se pierden.</div></div><button class="btn sm" onclick="exportData()">Respaldar</button></div></section>`;
+  }
+
   MEALS.forEach(([id, name, ic]) => {
     const items = t.D.foods.map((f, i) => [f, i]).filter(([f]) => f.meal === id);
     const sum = items.reduce((a, [f]) => a + f.k, 0);
+    const prev = lastMeal(id);
     h += `<section class="card"><div class="row"><h3>${ic} ${name}</h3><span class="muted">${fmt(sum)} kcal</span></div>
       ${items.map(([f, i]) => `<div class="item"><div class="grow"><div>${esc(f.n)}</div><div class="small muted">${esc(f.q)}</div></div><div class="kc">${fmt(f.k)}</div><button class="x" onclick="delFood(${i})" aria-label="Eliminar">×</button></div>`).join('')}
-      <button class="add" onclick="openFood('${id}')">+ Agregar</button></section>`;
+      <button class="add" onclick="openFood('${id}')">+ Agregar</button>
+      ${prev || items.length ? `<div class="actions">
+        ${prev ? `<button onclick="repeatMeal('${id}','${prev.d}')">↺ Repetir ${prev.d === addDays(cur, -1) ? 'de ayer' : 'del ' + dayLabel(prev.d)} · ${fmt(prev.k)} kcal</button>` : ''}
+        ${items.length ? `<button onclick="saveCombo('${id}')">⭐ Guardar combo</button>` : ''}</div>` : ''}</section>`;
   });
 
   h += `<section class="card"><div class="row"><h3>🏃 Ejercicio</h3><span class="muted">${fmt(t.ex)} kcal</span></div>
@@ -121,6 +131,38 @@ function viewHoy() {
   return h;
 }
 function delFood(i) { getDay(cur).foods.splice(i, 1); save(); render(); }
+
+// ---------- Repetir comidas y combos ----------
+// Último día (hasta 14 atrás) en que registraste esa comida
+function lastMeal(meal) {
+  for (let i = 1; i <= 14; i++) {
+    const d = addDays(cur, -i), items = (S.days[d]?.foods || []).filter(f => f.meal === meal);
+    if (items.length) return { d, items, k: items.reduce((a, f) => a + f.k, 0) };
+  }
+  return null;
+}
+function addItems(items, meal) {
+  const D = ensureDay(cur);
+  items.forEach(({ meal: _, ...f }) => D.foods.push({ ...f, meal }));
+  save(); render(); toast(`Agregado: ${fmt(items.reduce((a, f) => a + f.k, 0))} kcal`);
+}
+function repeatMeal(meal, d) { addItems(S.days[d].foods.filter(f => f.meal === meal), meal); }
+function saveCombo(meal) {
+  const items = getDay(cur).foods.filter(f => f.meal === meal);
+  const name = prompt('Nombre del combo', `Mi ${MEALS.find(m => m[0] === meal)[1].toLowerCase()}`);
+  if (!name?.trim()) return;
+  S.combos.unshift({ id: 'k' + Date.now(), n: name.trim(), items: items.map(({ meal: _, ...f }) => f) });
+  save(); toast('Combo guardado ⭐');
+}
+function addCombo(id) { const c = S.combos.find(x => x.id === id); closeSheet(); addItems(c.items, fMeal); }
+function delCombo(id) {
+  if (!confirm('¿Eliminar este combo?')) return;
+  S.combos = S.combos.filter(x => x.id !== id); save(); foodList();
+}
+function comboRow(c) {
+  const k = c.items.reduce((a, f) => a + f.k, 0);
+  return `<div class="item"><button class="grow btnitem plain" onclick="addCombo('${c.id}')"><div>⭐ ${esc(c.n)}</div><div class="small muted">${esc(c.items.map(f => f.n).join(', '))}</div></button><div class="kc">${fmt(k)}</div><button class="x" onclick="delCombo('${c.id}')" aria-label="Eliminar combo">×</button></div>`;
+}
 function delEx(i) { getDay(cur).ex.splice(i, 1); save(); render(); }
 
 // ---------- Hoja inferior ----------
@@ -143,7 +185,7 @@ function openFood(meal) {
   fMeal = meal || defaultMeal();
   openSheet(head('Agregar comida') + `
     <input id="q" type="search" placeholder="Buscar: arroz, pollo, pizza…" oninput="foodList()" autocomplete="off">
-    <div class="row gap"><button class="btn sec" onclick="openScan()">📷 Código</button><button class="btn sec" onclick="openAI()">✨ Con IA</button><button class="btn sec" onclick="customForm()">✏️ Crear</button></div>
+    <div class="row gap"><button class="btn sec" onclick="openScan()">📷 Escanear código</button><button class="btn sec" onclick="customForm()">✏️ Crear / rápido</button></div>
     <div id="flist"></div>`);
   foodList();
 }
@@ -161,13 +203,15 @@ function foodList() {
   const q = norm($('#q').value.trim());
   let h = '';
   if (!q) {
+    if (S.combos.length) h += `<div class="label">Mis combos · se agregan completos</div>` + S.combos.map(comboRow).join('');
     const rec = recents();
     if (rec.length) h += `<div class="label">Recientes</div>` + rec.map(foodRow).join('');
     h += `<div class="label">Todos</div>` + allFoods().map(foodRow).join('');
   } else {
     const words = q.split(/\s+/);
+    const combos = S.combos.filter(c => words.every(w => norm(c.n).includes(w)));
     const list = allFoods().filter(f => { const t = norm(f.n + ' ' + (f.syn || '')); return words.every(w => t.includes(w)); });
-    h = list.length ? list.map(foodRow).join('')
+    h = combos.length || list.length ? combos.map(comboRow).join('') + list.map(foodRow).join('')
       : `<p class="muted">No lo encontré. <a href="#" onclick="customForm(); return false">Créalo o ingresa las kcal directo</a>.</p>`;
   }
   $('#flist').innerHTML = h;
@@ -246,7 +290,7 @@ async function openScan() {
   const stop = () => { stopped = true; if (sc) sc.stop().catch(() => {}); };
   sheetCleanup = stop;
   try {
-    await loadScript('https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js');
+    await loadScript('lib/html5-qrcode.min.js');
     if (stopped) return;
     const F = Html5QrcodeSupportedFormats;
     sc = new Html5Qrcode('reader', { formatsToSupport: [F.EAN_13, F.EAN_8, F.UPC_A, F.UPC_E], verbose: false, experimentalFeatures: { useBarCodeDetectorIfSupported: true } });
@@ -437,11 +481,7 @@ function viewPerfil() {
       <p class="small muted">Como registras al ojo, la app compara lo que comiste con cómo cambió tu peso en las últimas 4 semanas y corrige tu gasto (±700 kcal máx.). Necesita 10 días con comidas y 3 pesajes.</p>
       <label class="check"><input type="checkbox" ${p.adapt !== false ? 'checked' : ''} onchange="S.profile.adapt=this.checked;save();render()"> Activado</label>
       <p class="small">${esc(adaptiveText(ADJ))}</p></section>
-    <section class="card"><h3>✨ IA (opcional)</h3>
-      <p class="small muted">Para registrar comida describiéndola o con foto. Usa Claude (Anthropic) con tu propia API key: créala en console.anthropic.com (prepago). Cada consulta cuesta aprox. US$0,01–0,03. La key queda solo en este teléfono y no va en el respaldo.</p>
-      ${getKey() ? `<p class="pos small">✓ API key configurada</p><button class="btn ghost" onclick="delKey()">Borrar API key</button>`
-        : `<input id="aik" type="password" placeholder="sk-ant-…" autocomplete="off"><button class="btn sec full" onclick="saveKey()">Guardar API key</button>`}</section>
-    <section class="card"><h3>Respaldo</h3><p class="small muted">Tus datos viven solo en este teléfono. Exporta de vez en cuando.</p>
+    <section class="card"><h3>💾 Respaldo</h3><p class="small muted">Tus datos viven solo en este teléfono. Al respaldar puedes guardarlo en Google Drive, mandártelo por WhatsApp o correo. Último respaldo: ${S.lastBackup ? dayLabel(S.lastBackup) : 'nunca'}.</p>
       <div class="row gap"><button class="btn sec" onclick="exportData()">⬇️ Exportar</button><label class="btn sec">⬆️ Importar<input type="file" accept="application/json" hidden onchange="importData(this.files[0])"></label></div></section>
     <p class="small muted center">Fotos de ejercicios: free-exercise-db (dominio público). Parte de las instrucciones: exercises-dataset (MIT). Productos: Open Food Facts (ODbL). Valores de alimentos aproximados.</p>`;
   }
@@ -459,10 +499,23 @@ function saveProfile() {
   save();
   if (first) goTab('hoy'); else { render(); toast('Perfil guardado'); }
 }
-function exportData() {
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([JSON.stringify(S)], { type: 'application/json' }));
-  a.download = `watonql-respaldo-${TODAY()}.json`; a.click();
+async function exportData() {
+  S.lastBackup = TODAY();
+  const name = `watonql-respaldo-${TODAY()}.json`;
+  const file = new File([JSON.stringify(S)], name, { type: 'application/json' });
+  const download = () => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(file); a.download = name; a.click();
+  };
+  try {
+    // En el celular abre el menú "Compartir" (Drive, WhatsApp, correo…)
+    if (navigator.canShare?.({ files: [file] })) await navigator.share({ files: [file], title: 'Respaldo watonql' });
+    else download();
+  } catch (e) {
+    if (e.name === 'AbortError') { delete S.lastBackup; return; }
+    download();
+  }
+  save(); render(); toast('Respaldo listo');
 }
 async function importData(file) {
   if (!file) return;
@@ -470,7 +523,7 @@ async function importData(file) {
     const d = JSON.parse(await file.text());
     if (!d.days || !d.profile) throw 0;
     if (!confirm('Esto reemplaza tus datos actuales. ¿Continuar?')) return;
-    S = d; S.custom ||= []; S.weights ||= []; save(); render(); toast('Datos importados');
+    S = d; S.custom ||= []; S.weights ||= []; S.combos ||= []; save(); render(); toast('Datos importados');
   } catch { toast('Archivo inválido'); }
 }
 
@@ -478,3 +531,4 @@ async function importData(file) {
 $('#sheet').addEventListener('click', e => { if (e.target.id === 'sheet') closeSheet(); });
 render();
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+navigator.storage?.persist?.().catch(() => {}); // pide al navegador no borrar los datos por falta de espacio
