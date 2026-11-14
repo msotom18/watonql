@@ -211,22 +211,124 @@ const FOODS_RAW = [
   ['Piscola / ron-cola', 'vaso', 220, 0, 22, 0, [], 'pisco cola cubata'],
   ['Pisco sour', 'copa', 230, 1, 20, 0, [], 'sour'],
   ['Terremoto', 'vaso', 400, 0.5, 45, 4, [], 'pipeño helado'],
+
+  // ---- Agregados v5 (al final para no cambiar los ids de arriba) ----
+  '#Frutas',
+  ['Tuna', 'unidad', 40, 0.7, 10, 0.5, [], 'nopal'],
+  ['Granada', 'media unidad', 115, 2.3, 26, 1.6, [['entera', 2]], ''],
+  ['Membrillo', 'unidad', 70, 0.5, 19, 0.1, [], ''],
+  ['Pomelo', 'media unidad', 50, 1, 13, 0.2, [], 'toronja'],
+  ['Higo', 'unidad', 37, 0.4, 10, 0.2, [], 'breva'],
+  ['Maracuyá', 'unidad', 17, 0.4, 4, 0.1, [], 'fruta de la pasion'],
+  ['Damasco', 'unidad', 17, 0.5, 4, 0.1, [], 'albaricoque'],
+  ['Moras', 'taza', 62, 2, 14, 0.7, [], 'zarzamora'],
+  ['Frutillas con crema', 'pote', 250, 2.5, 25, 15, [], 'crema chantilly'],
+  ['Durazno en conserva', 'mitad', 50, 0.3, 13, 0, [], 'almibar'],
+  ['Melón con vino', 'medio melón', 380, 2, 45, 0.5, [], 'trago'],
+  '#Ensaladas y verduras',
+  ['Ensalada de tomate', 'plato', 110, 2, 8, 8, [], 'tomate aceite'],
+  ['Ensalada de pepino', 'plato', 60, 1, 5, 4, [], 'pepino'],
+  ['Ensalada de zanahoria rallada', 'plato', 90, 1.5, 14, 3.5, [], 'zanahoria'],
+  ['Ensalada de repollo', 'plato', 90, 2, 10, 5, [], 'repollo'],
+  ['Ensalada de apio', 'plato', 70, 1, 5, 5, [], 'apio'],
+  ['Ensalada de palmitos', 'plato', 110, 5, 9, 4, [], 'palmitos'],
+  ['Ensalada de choclo', 'plato', 260, 8, 50, 5, [], 'choclo maiz'],
+  ['Ensalada de porotos verdes', 'plato', 100, 3, 10, 5, [], 'porotos verdes'],
+  ['Ensalada de quinoa', 'plato', 350, 11, 45, 14, [], 'quinua'],
+  ['Ensalada César (con pollo)', 'plato', 450, 25, 20, 30, [], 'cesar pollo crutones'],
+  ['Lechuga con palta', 'plato', 230, 3, 10, 20, [], 'lechuga palta'],
+  ['Ensalada surtida con huevo', 'plato', 250, 12, 12, 17, [], 'huevo duro'],
+  ['Ensalada de betarraga', 'plato', 120, 3, 22, 3, [], 'remolacha'],
+
+  // Copete. "Caña" = vaso de 250 ml: 40% licor + 60% bebida (100 ml + 150 ml)
+  '#Copete',
+  ['Piscola', 'caña (250 ml)', 256, 0, 16, 0, [['vaso corto (150 ml)', 0.6]], 'pisco cola coca'],
+  ['Fernet con coca', 'caña (250 ml)', 313, 0, 20, 0, [['vaso corto (150 ml)', 0.6]], 'fernet branca'],
+  ['Ron con coca', 'caña (250 ml)', 284, 0, 16, 0, [['vaso corto (150 ml)', 0.6]], 'cuba libre roncola'],
+  ['Whisky con coca / ginger', 'caña (250 ml)', 284, 0, 16, 0, [['vaso corto (150 ml)', 0.6]], 'whiscola'],
+  ['Whisky solo / en las rocas', 'vaso (60 ml)', 133, 0, 0, 0, [], 'whisky'],
+  ['Vodka con jugo', 'caña (250 ml)', 291, 0.5, 17, 0, [['vaso corto (150 ml)', 0.6]], 'destornillador'],
+  ['Vodka con energética', 'caña (250 ml)', 289, 0, 17, 0, [['vaso corto (150 ml)', 0.6]], 'red bull'],
+  ['Vodka con Sprite', 'caña (250 ml)', 278, 0, 14, 0, [['vaso corto (150 ml)', 0.6]], 'vodka limon'],
+  ['Gin tonic', 'caña (250 ml)', 272, 0, 13, 0, [['copa grande', 1.4]], 'gin'],
+  ['Tropical gin (lata)', 'lata (473 cc)', 320, 0, 35, 0, [], 'patagon kantal gin tropical'],
+  ['Cóctel en lata (gin, piscola…)', 'lata (350 cc)', 200, 0, 18, 0, [], 'lata preparada'],
+  ['Mistral Ice / Smirnoff Ice', 'botella o lata', 230, 0, 30, 0, [], 'ice'],
+  ['Jote (vino con coca)', 'caña (250 ml)', 159, 0, 16, 0, [], 'calimocho'],
+  ['Cerveza artesanal / IPA', 'botella o lata (355 ml)', 210, 2, 18, 0, [], 'cerveza'],
+  ['Cerveza sin alcohol', 'lata (350 ml)', 70, 1, 15, 0, [], 'cerveza 0.0'],
+  ['Michelada', 'schop (500 ml)', 230, 2, 22, 0, [], 'cerveza limon'],
+  ['Espumante', 'copa', 110, 0, 3, 0, [['botella', 5]], 'champaña'],
+  ['Navegado', 'taza', 250, 0, 30, 0, [], 'vino caliente'],
+  ['Sangría', 'vaso', 200, 0, 22, 0, [], ''],
+  ['Clery', 'copa', 180, 0, 18, 0, [], 'vino frutillas'],
+  ['Chicha', 'vaso', 160, 0, 20, 0, [], 'fiestas patrias'],
+  ['Cola de mono', 'vaso', 250, 3, 30, 5, [], 'colemono'],
+  ['Mojito', 'vaso', 220, 0, 25, 0, [], 'ron menta'],
+  ['Margarita', 'copa', 270, 0, 20, 0, [], 'tequila'],
+  ['Aperol / Ramazzotti spritz', 'copa', 170, 0, 16, 0, [], 'spritz'],
+  ['Malibú con piña', 'caña (250 ml)', 230, 0, 30, 0, [], 'malibu'],
+  ['Baileys', 'vaso corto (60 ml)', 200, 1.5, 12, 8, [], 'crema whisky'],
+  ['Shot de tequila', 'shot (40 ml)', 88, 0, 0, 0, [], 'cachito'],
+  ['Shot de pisco', 'shot (40 ml)', 77, 0, 0, 0, [], 'cachito'],
+  ['Shot de vodka', 'shot (40 ml)', 88, 0, 0, 0, [], 'cachito'],
+  ['Shot de Jäger', 'shot (40 ml)', 103, 0, 7, 0, [], 'jagermeister'],
+  ['Jägerbomb', 'unidad', 160, 0, 21, 0, [], 'jager energetica'],
 ];
+
+// Cantidad "al ojo" (un poco / más o menos / harto) para lo que no se cuenta por unidad.
+// [tipo, cuánto es 1 porción base en la unidad del tipo]
+const QTY_TYPES = {
+  ens: [['Un poco', 0.5, '½ taza'], ['Más o menos', 1, '1 taza'], ['Harto', 2, 'plato lleno']],
+  taza: [['Un poco', 0.5, '½ taza'], ['Más o menos', 1, '1 taza'], ['Harto', 2, '2 tazas']],
+  plato: [['Un poco', 0.5, '½ plato'], ['Más o menos', 1, '1 plato normal'], ['Harto', 1.5, 'plato colmado']],
+  g: [['Un poco', 80, 'porción chica ~80 g'], ['Más o menos', 150, 'porción normal ~150 g'], ['Harto', 250, 'porción grande ~250 g']],
+  cda: [['Un poco', 1 / 3, '1 cucharadita'], ['Más o menos', 1, '1 cucharada'], ['Harto', 3, '3 cucharadas']],
+  pu: [['Un poco', 0.5, 'un puñadito'], ['Más o menos', 1, '1 puñado'], ['Harto', 2, '2 puñados']],
+  vaso: [['Un poco', 125, '½ vaso'], ['Más o menos', 250, '1 vaso (250 ml)'], ['Harto', 500, '2 vasos']],
+};
+const QTY = {
+  ens: [2, 'Ensalada chilena', 'Ensalada de lechuga (sin aliño)', 'Ensalada surtida con aliño', 'Porotos verdes / verduras salteadas',
+    'Ensalada de tomate', 'Ensalada de pepino', 'Ensalada de zanahoria rallada', 'Ensalada de repollo', 'Ensalada de apio',
+    'Ensalada de palmitos', 'Ensalada de choclo', 'Ensalada de porotos verdes', 'Ensalada de quinoa', 'Ensalada César (con pollo)',
+    'Lechuga con palta', 'Ensalada surtida con huevo', 'Ensalada de betarraga'],
+  taza: [1, 'Puré de papas', 'Mote de trigo', 'Quinoa', 'Cereal de caja', 'Avena con leche', 'Cabritas'],
+  plato: [1, 'Arroz', 'Tallarines / fideos', 'Papas mayo', 'Porotos con riendas', 'Porotos granados', 'Lentejas', 'Garbanzos', 'Cazuela',
+    'Charquicán', 'Carbonada', 'Pantrucas', 'Pastel de choclo', 'Arroz con pollo', 'Pollo arvejado', 'Carne mechada / guiso',
+    'Tallarines con salsa boloñesa', 'Ñoquis con salsa', 'Sopa / crema de verduras', 'Pollo con arroz y ensalada (casero)',
+    'Lomo saltado', 'Arroz chaufa / comida china', 'Ceviche', 'Paila marina / caldillo', 'Machas a la parmesana'],
+  g150: [150, 'Bistec / lomo'], g120: [120, 'Asado (parrilla)'], g100: [100, 'Carne molida / pino'],
+  cda: [1, 'Aceite', 'Mayonesa', 'Kétchup', 'Salsa americana / chucrut', 'Mermelada', 'Manjar', 'Miel', 'Mantequilla de maní',
+    'Queso crema', 'Palta', 'Pebre'],
+  cdta: [1 / 3, 'Mostaza / ají', 'Mantequilla / margarina'],
+  pu: [1, 'Maní', 'Frutos secos', 'Granola', 'Pasas'],
+  vaso: [250, 'Jugo natural', 'Néctar / jugo de caja', 'Jugo en polvo', 'Leche entera', 'Leche semidescremada', 'Leche descremada', 'Leche con plátano'],
+};
+const QTY_BY_NAME = {};
+Object.entries(QTY).forEach(([t, [base, ...names]]) => names.forEach(n => {
+  QTY_BY_NAME[n] = [t.replace(/\d+$/, '').replace('cdta', 'cda'), base];
+}));
+// Bebidas alcohólicas que estaban en "Bebidas" pasan a "Copete"; la piscola antigua se oculta (la reemplaza la nueva)
+const MOVE_TO_COPETE = ['Cerveza', 'Vino', 'Pisco sour', 'Terremoto'];
+const HIDDEN = ['Piscola / ron-cola'];
+// Versión con bebida zero (solo licor: 100 ml)
+const ZERO = { 'Piscola': { k: 193, c: 0 }, 'Fernet con coca': { k: 250, c: 4 } };
 
 // Categorías (las líneas '#...' de arriba) con su nombre visible
 const FOOD_CATS = [
   ['Panes y masas', '🥖 Panes'], ['Desayuno y once', '☕ Desayuno y once'], ['Lácteos', '🥛 Lácteos'],
   ['Acompañamientos', '🍚 Acompañamientos'], ['Ensaladas y verduras', '🥗 Ensaladas'], ['Carnes, pollo y pescado', '🍗 Carnes y pescados'],
   ['Platos caseros chilenos', '🍲 Platos caseros'], ['Comida rápida y "picoteo"', '🌭 Comida rápida'], ['Frutas', '🍎 Frutas'],
-  ['Dulces y snacks', '🍫 Dulces y snacks'], ['Salsas y aderezos', '🧂 Salsas'], ['Bebidas', '🥤 Bebidas y tragos'],
+  ['Dulces y snacks', '🍫 Dulces y snacks'], ['Salsas y aderezos', '🧂 Salsas'], ['Bebidas', '🥤 Bebidas'], ['Copete', '🍻 Copete'],
 ];
 // Qué categorías mostrar primero según la comida del día
 const MEAL_CATS = {
-  des: ['Desayuno y once', 'Panes y masas', 'Lácteos', 'Frutas', 'Bebidas'],
-  onc: ['Desayuno y once', 'Panes y masas', 'Lácteos', 'Dulces y snacks', 'Bebidas'],
-  alm: ['Platos caseros chilenos', 'Carnes, pollo y pescado', 'Acompañamientos', 'Ensaladas y verduras', 'Comida rápida y "picoteo"', 'Bebidas'],
-  cen: ['Platos caseros chilenos', 'Carnes, pollo y pescado', 'Acompañamientos', 'Ensaladas y verduras', 'Comida rápida y "picoteo"', 'Bebidas'],
+  des: ['Desayuno y once', 'Panes y masas', 'Frutas', 'Lácteos', 'Bebidas'],
+  onc: ['Desayuno y once', 'Panes y masas', 'Frutas', 'Lácteos', 'Dulces y snacks', 'Bebidas'],
+  alm: ['Platos caseros chilenos', 'Carnes, pollo y pescado', 'Ensaladas y verduras', 'Acompañamientos', 'Frutas', 'Comida rápida y "picoteo"', 'Bebidas'],
+  cen: ['Platos caseros chilenos', 'Carnes, pollo y pescado', 'Ensaladas y verduras', 'Acompañamientos', 'Frutas', 'Comida rápida y "picoteo"', 'Bebidas'],
   sna: ['Frutas', 'Dulces y snacks', 'Lácteos', 'Bebidas'],
+  car: ['Copete', 'Comida rápida y "picoteo"', 'Dulces y snacks', 'Bebidas'],
 };
 
 // El id (db0, db1…) cuenta solo alimentos, así no cambia al agregar categorías
@@ -234,5 +336,11 @@ const FOODS = [];
 let _cat = '';
 FOODS_RAW.forEach(r => {
   if (typeof r === 'string') { _cat = r.slice(1); return; }
-  FOODS.push({ id: 'db' + FOODS.length, n: r[0], u: r[1], k: r[2], p: r[3], c: r[4], f: r[5], alt: r[6] || [], syn: r[7] || '', cat: _cat });
+  const f = { id: 'db' + FOODS.length, n: r[0], u: r[1], k: r[2], p: r[3], c: r[4], f: r[5], alt: r[6] || [], syn: r[7] || '', cat: _cat };
+  if (MOVE_TO_COPETE.includes(f.n)) f.cat = 'Copete';
+  if (HIDDEN.includes(f.n)) f.hidden = true;
+  if (QTY_BY_NAME[f.n]) f.q = QTY_BY_NAME[f.n];
+  if (ZERO[f.n]) f.zero = ZERO[f.n];
+  FOODS.push(f);
 });
+const LIST_FOODS = FOODS.filter(f => !f.hidden); // lo que se muestra en listas (los ocultos siguen sirviendo para el historial)

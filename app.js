@@ -46,7 +46,7 @@ const GOALS = [
   { v: 250, l: 'Ganar músculo (limpio)', d: '≈ +0,25 kg/semana' },
   { v: 450, l: 'Ganar músculo', d: '≈ +0,4 kg/semana' },
 ];
-const MEALS = [['des', 'Desayuno', '☕'], ['alm', 'Almuerzo', '🍛'], ['onc', 'Once', '🫖'], ['cen', 'Cena', '🌙'], ['sna', 'Colaciones', '🍎']];
+const MEALS = [['des', 'Desayuno', '☕'], ['alm', 'Almuerzo', '🍛'], ['onc', 'Once', '🫖'], ['cen', 'Cena', '🌙'], ['sna', 'Colaciones', '🍎'], ['car', 'Carrete', '🍻']];
 const SIZES = [['Chico', 0.75], ['Normal', 1], ['Grande', 1.35]];
 
 const bmr = p => 10 * p.weight + 6.25 * p.height - 5 * p.age + (p.sex === 'm' ? 5 : -161);
@@ -117,7 +117,8 @@ function viewHoy() {
     const items = t.D.foods.map((f, i) => [f, i]).filter(([f]) => f.meal === id);
     const sum = items.reduce((a, [f]) => a + f.k, 0);
     const prev = lastMeal(id);
-    h += `<section class="card"><div class="row"><h3>${ic} ${name}</h3><span class="muted">${fmt(sum)} kcal</span></div>
+    const nDr = id === 'car' ? items.reduce((a, [f]) => a + (isDrink(f) ? f.dr ?? 1 : 0), 0) : 0;
+    h += `<section class="card"><div class="row"><h3>${ic} ${name}</h3><span class="muted">${nDr ? `${fmt(nDr)} trago${nDr > 1 ? 's' : ''} · ` : ''}${fmt(sum)} kcal</span></div>
       ${items.map(([f, i]) => `<div class="item"><div class="grow"><div>${esc(f.n)}</div><div class="small muted">${esc(f.q)}</div></div><div class="kc">${fmt(f.k)}</div><button class="x" onclick="delFood(${i})" aria-label="Eliminar">×</button></div>`).join('')}
       <button class="add" onclick="openFood('${id}')">+ Agregar</button>
       ${prev || items.length ? `<div class="actions">
@@ -213,17 +214,17 @@ function foodList() {
   if (!q && fCat === 'mine') {
     h = S.custom.map(foodRow).join('');
   } else if (!q && fCat) {
-    h = FOODS.filter(f => f.cat === fCat).map(foodRow).join('');
+    h = LIST_FOODS.filter(f => f.cat === fCat).map(foodRow).join('');
   } else if (!q) {
     if (S.combos.length) h += `<div class="label">Mis combos · se agregan completos</div>` + S.combos.map(comboRow).join('');
     const rec = recents(fMeal);
     if (rec.length) h += `<div class="label">Lo que sueles comer en ${mealName(fMeal).toLowerCase()}</div>` + rec.map(foodRow).join('');
-    MEAL_CATS[fMeal].forEach(k => { h += `<div class="label">${catLabel(k)}</div>` + FOODS.filter(f => f.cat === k).map(foodRow).join(''); });
+    MEAL_CATS[fMeal].forEach(k => { h += `<div class="label">${catLabel(k)}</div>` + LIST_FOODS.filter(f => f.cat === k).map(foodRow).join(''); });
     h += `<p class="small muted center">¿No está? Búscalo arriba o elige otra categoría.</p>`;
   } else {
     const words = q.split(/\s+/);
     const combos = S.combos.filter(c => words.every(w => norm(c.n).includes(w)));
-    const list = allFoods().filter(f => { const t = norm(f.n + ' ' + (f.syn || '')); return words.every(w => t.includes(w)); });
+    const list = [...S.custom, ...LIST_FOODS].filter(f => { const t = norm(f.n + ' ' + (f.syn || '')); return words.every(w => t.includes(w)); });
     h = combos.length || list.length ? combos.map(comboRow).join('') + list.map(foodRow).join('')
       : `<p class="muted">No lo encontré. <a href="#" onclick="customForm(); return false">Créalo o ingresa las kcal directo</a>.</p>`;
   }
@@ -231,11 +232,16 @@ function foodList() {
 }
 function pickFood(id) {
   const f = findFood(id);
-  pick = { f, por: 0, qty: 1, size: 1 };
-  openSheet(head(esc(f.n), 'openFood(fMeal)') + sellosHtml(f) + `
-    <div class="label">Porción</div><div class="chips">${portions(f).map(([u], i) => chip(esc(u), !i, `setPick('por',${i},this)`)).join('')}</div>
-    <div class="label">Cantidad</div><div class="chips">${[0.5, 1, 1.5, 2, 3].map(q => chip(qtyTxt(q), q === 1, `setPick('qty',${q},this)`)).join('')}<input type="number" class="mini" min="0" step="0.5" placeholder="otra" inputmode="decimal" oninput="this.parentNode.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));setPick('qty',+this.value||0)"></div>
-    <div class="label">Tamaño (al ojo)</div><div class="chips">${SIZES.map(([l, v]) => chip(l, v === 1, `setPick('size',${v},this)`)).join('')}</div>
+  const drink = f.cat === 'Copete';
+  pick = { f, por: 0, qty: 1, size: 1, lvl: 1, zero: !!(f.zero && S.lastZero) };
+  const qtyChips = (drink ? [1, 2, 3, 4, 5] : [0.5, 1, 1.5, 2, 3]).map(q => chip(qtyTxt(q), q === 1, `setPick('qty',${q},this)`)).join('');
+  openSheet(head(esc(f.n), 'openFood(fMeal)') + sellosHtml(f) + (f.q ? `
+    <div class="label">¿Cuánto comiste? (al ojo)</div>
+    <div class="chips lv">${QTY_TYPES[f.q[0]].map(([l, , d], i) => chip(`${l}<small>${d}</small>`, i === 1, `setPick('lvl',${i},this)`)).join('')}</div>` : `
+    ${f.zero ? `<div class="label">¿La bebida fue zero?</div><div class="chips">${chip('Bebida normal', !pick.zero, `setPick('zero',false,this)`)}${chip('Zero / light', pick.zero, `setPick('zero',true,this)`)}</div>` : ''}
+    <div class="label">${drink ? 'Tamaño' : 'Porción'}</div><div class="chips">${portions(f).map(([u], i) => chip(esc(u), !i, `setPick('por',${i},this)`)).join('')}</div>
+    <div class="label">${drink ? '¿Cuántos?' : 'Cantidad'}</div><div class="chips">${qtyChips}<input type="number" class="mini" min="0" step="0.5" placeholder="otra" inputmode="decimal" oninput="this.parentNode.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));setPick('qty',+this.value||0)"></div>
+    ${drink ? '' : `<div class="label">Tamaño (al ojo)</div><div class="chips">${SIZES.map(([l, v]) => chip(l, v === 1, `setPick('size',${v},this)`)).join('')}</div>`}`) + `
     <div class="label">Comida</div><div class="chips">${MEALS.map(([m, l]) => chip(l, m === fMeal, `fMeal='${m}';setOn(this)`)).join('')}</div>
     <div class="preview" id="pv"></div>
     <button class="btn" onclick="addPicked()">Agregar</button>
@@ -243,21 +249,50 @@ function pickFood(id) {
   pv();
 }
 function setPick(k, v, el) { pick[k] = v; if (el) setOn(el); pv(); }
-const pickMult = () => portions(pick.f)[pick.por][1] * pick.qty * pick.size;
+const pickMult = () => (pick.f.q
+  ? QTY_TYPES[pick.f.q[0]][pick.lvl][1] / pick.f.q[1]
+  : portions(pick.f)[pick.por][1] * pick.qty * pick.size);
+// Con bebida zero cambian las kcal y los carbohidratos del trago
+const pickBase = () => (pick.zero && pick.f.zero ? { ...pick.f, ...pick.f.zero } : pick.f);
 function pv() {
-  const f = pick.f, m = pickMult();
+  const f = pickBase(), m = pickMult();
   $('#pv').innerHTML = `<b>${fmt(f.k * m)} kcal</b><span>P ${R(f.p * m)} g · C ${R(f.c * m)} g · G ${R(f.f * m)} g</span>`;
 }
 function addPicked() {
-  const f = pick.f, m = pickMult();
+  const f = pickBase(), m = pickMult();
   if (!m) return toast('Elige una cantidad');
-  const size = SIZES.find(s => s[1] === pick.size)[0];
-  ensureDay(cur).foods.push({
-    ref: f.id, n: f.n, meal: fMeal,
-    q: `${qtyTxt(pick.qty)} ${portions(f)[pick.por][0]}${pick.size !== 1 ? ' · ' + size.toLowerCase() : ''}`,
-    k: R(f.k * m), p: r1(f.p * m), c: r1(f.c * m), f: r1(f.f * m),
-  });
+  let q;
+  if (f.q) { const [l, , d] = QTY_TYPES[f.q[0]][pick.lvl]; q = `${l} · ${d}`; }
+  else {
+    const size = SIZES.find(s => s[1] === pick.size)[0];
+    q = `${qtyTxt(pick.qty)} ${portions(f)[pick.por][0]}${pick.size !== 1 ? ' · ' + size.toLowerCase() : ''}`;
+  }
+  const entry = { ref: f.id, n: f.n + (pick.zero && f.zero ? ' (zero)' : ''), meal: fMeal, q, k: R(f.k * m), p: r1(f.p * m), c: r1(f.c * m), f: r1(f.f * m) };
+  if (f.cat === 'Copete') entry.dr = pick.qty; // para el contador de tragos
+  if (f.zero) S.lastZero = pick.zero;
+  ensureDay(cur).foods.push(entry);
   save(); closeSheet(); render(); toast(`Agregado: ${fmt(f.k * m)} kcal`);
+}
+
+// ---------- Contador de tragos ----------
+const isDrink = e => e.dr != null || findFood(e.ref)?.cat === 'Copete';
+function drinksBetween(from, to) {
+  let n = 0, k = 0, days = 0;
+  for (let d = from; d <= to; d = addDays(d, 1)) {
+    const ds = (S.days[d]?.foods || []).filter(isDrink);
+    if (ds.length) days++;
+    ds.forEach(e => { n += e.dr ?? 1; k += e.k; });
+  }
+  return { n, k, days };
+}
+function drinksCard() {
+  const t = TODAY(), w = drinksBetween(addDays(t, -6), t), m = drinksBetween(addDays(t, -29), t);
+  if (!m.n) return '';
+  return `<section class="card"><h3>🍻 Contador de copete</h3>
+    <table class="tot"><thead><tr><th></th><th>Tragos</th><th>kcal</th><th>Días</th></tr></thead><tbody>
+      <tr><td>Últimos 7 días</td><td>${fmt(w.n)}</td><td>${fmt(w.k)}</td><td>${w.days}</td></tr>
+      <tr><td>Últimos 30 días</td><td>${fmt(m.n)}</td><td>${fmt(m.k)}</td><td>${m.days}</td></tr></tbody></table>
+    <p class="small muted">${w.k ? `El copete de esta semana equivale a ~${fmt(w.k / 270)} marraquetas.` : ''}</p></section>`;
 }
 function delCustom(id) {
   if (!confirm('¿Eliminar este alimento de tu lista? (Lo ya registrado no se borra)')) return;
@@ -449,6 +484,7 @@ function viewHist() {
       <div class="muted">kcal de balance ≈ ${wb > 0 ? '+' : ''}${(wb / 7700).toFixed(2).replace('.', ',')} kg de grasa</div>
     </section>
     <section class="card"><h3>Balance diario (14 días)</h3>${chartBalance()}</section>
+    ${drinksCard()}
     <section class="card"><h3>Peso (60 días)</h3>${chartWeight()}
       <p class="small muted">🧠 Gasto real: ${esc(adaptiveText(ADJ))}</p></section>
     <section class="card"><h3>Días</h3>${days.length ? days.map(d => {

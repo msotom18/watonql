@@ -160,3 +160,5 @@ textarea:focus { border-color: var(--accent); }
 .tot th span { font-size: .62rem; }
 .tot td { text-align: right; padding: 7px 2px; border-top: 1px solid var(--line); }
 .tot td:first-child { text-align: left; }
+.chips.lv .chip { display: flex; flex-direction: column; align-items: center; line-height: 1.15; padding: 8px 14px; flex: 1; }
+.chips.lv .chip small { font-size: .72rem; opacity: .8; font-weight: 400; margin-top: 2px; }
