@@ -82,7 +82,7 @@ function render() {
   $('#nextDay').disabled = cur >= TODAY();
   ADJ = S.profile && S.profile.adapt !== false ? adaptive() : null;
   $('#view').innerHTML = { hoy: viewHoy, rutinas: viewRutinas, hist: viewHist, perfil: viewPerfil }[tab]();
-  if (tab === 'hist') bindCharts();
+  if (tab === 'hist') { bindCharts(); document.querySelector('#view .chips.scroll .chip.on')?.scrollIntoView({ inline: 'center', block: 'nearest' }); }
 }
 
 // ---------- Hoy ----------
@@ -190,7 +190,7 @@ function openFood(meal) {
   const cats = [[null, `✨ Para ${mealName(fMeal).toLowerCase()}`], ...(S.custom.length ? [['mine', '⭐ Mis alimentos']] : []), ...FOOD_CATS];
   openSheet(head(`Agregar a ${mealName(fMeal).toLowerCase()}`) + `
     <input id="q" type="search" placeholder="Buscar: arroz, pollo, pizza…" oninput="foodList()" autocomplete="off">
-    <div class="row gap"><button class="btn sec" onclick="openScan()">📷 Escanear código</button><button class="btn sec" onclick="customForm()">✏️ Crear / rápido</button></div>
+    <div class="row gap tri"><button class="btn sec" onclick="openScan()">📷 Código</button><button class="btn sec" onclick="openCalc()">🧮 Por gramos</button><button class="btn sec" onclick="customForm()">✏️ Crear</button></div>
     <div class="chips scroll">${cats.map(([k, l]) => chip(l, k === fCat, `setCat(${k === null ? 'null' : `'${k.replace(/"/g, '&quot;')}'`},this)`)).join('')}</div>
     <div id="flist"></div>`);
   foodList();
@@ -206,7 +206,7 @@ function recents(meal) {
 }
 const catLabel = k => FOOD_CATS.find(c => c[0] === k)[1];
 function foodRow(f) {
-  return `<button class="item btnitem" onclick="pickFood('${f.id}')"><div class="grow"><div>${esc(f.n)}${f.id[0] === 'c' ? ' <span class="tag">mío</span>' : ''}${f.sellos?.length ? ` <span class="tag sel">⬣ ${f.sellos.length} sello${f.sellos.length > 1 ? 's' : ''}</span>` : ''}</div><div class="small muted">1 ${esc(f.u)}</div></div><div class="kc">${fmt(f.k)}</div></button>`;
+  return `<button class="item btnitem" onclick="pickFood('${f.id}')"><div class="grow"><div>${esc(f.n)}${f.id[0] === 'c' ? ' <span class="tag">mío</span>' : ''}${f.sellos?.length ? ` <span class="tag sel">⬣ ${f.sellos.length} sello${f.sellos.length > 1 ? 's' : ''}</span>` : ''}</div><div class="small muted">${f.per100 ? `por 100 ${f.per100}` : '1 ' + esc(f.u)}</div></div><div class="kc">${fmt(f.k)}</div></button>`;
 }
 function foodList() {
   const q = norm($('#q').value.trim());
@@ -233,9 +233,12 @@ function foodList() {
 function pickFood(id) {
   const f = findFood(id);
   const drink = f.cat === 'Copete';
-  pick = { f, por: 0, qty: 1, size: 1, lvl: 1, zero: !!(f.zero && S.lastZero) };
+  pick = { f, por: 0, qty: 1, size: 1, lvl: 1, gr: 100, zero: !!(f.zero && S.lastZero) };
+  const grams = f.per100 ? `
+    <div class="label">¿Cuántos ${f.per100 === 'ml' ? 'ml' : 'gramos'}?</div>
+    <div class="chips">${[50, 100, 150, 200, 250, 300].map(g => chip(g + ' ' + f.per100, g === 100, `setPick('gr',${g},this)`)).join('')}<input type="number" class="mini" placeholder="otro" inputmode="numeric" oninput="this.parentNode.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));setPick('gr',+this.value||0)"></div>` : '';
   const qtyChips = (drink ? [1, 2, 3, 4, 5] : [0.5, 1, 1.5, 2, 3]).map(q => chip(qtyTxt(q), q === 1, `setPick('qty',${q},this)`)).join('');
-  openSheet(head(esc(f.n), 'openFood(fMeal)') + sellosHtml(f) + (f.q ? `
+  openSheet(head(esc(f.n), 'openFood(fMeal)') + sellosHtml(f) + (f.per100 ? grams : f.q ? `
     <div class="label">¿Cuánto comiste? (al ojo)</div>
     <div class="chips lv">${QTY_TYPES[f.q[0]].map(([l, , d], i) => chip(`${l}<small>${d}</small>`, i === 1, `setPick('lvl',${i},this)`)).join('')}</div>` : `
     ${f.zero ? `<div class="label">¿La bebida fue zero?</div><div class="chips">${chip('Bebida normal', !pick.zero, `setPick('zero',false,this)`)}${chip('Zero / light', pick.zero, `setPick('zero',true,this)`)}</div>` : ''}
@@ -249,7 +252,7 @@ function pickFood(id) {
   pv();
 }
 function setPick(k, v, el) { pick[k] = v; if (el) setOn(el); pv(); }
-const pickMult = () => (pick.f.q
+const pickMult = () => (pick.f.per100 ? pick.gr / 100 : pick.f.q
   ? QTY_TYPES[pick.f.q[0]][pick.lvl][1] / pick.f.q[1]
   : portions(pick.f)[pick.por][1] * pick.qty * pick.size);
 // Con bebida zero cambian las kcal y los carbohidratos del trago
@@ -262,7 +265,8 @@ function addPicked() {
   const f = pickBase(), m = pickMult();
   if (!m) return toast('Elige una cantidad');
   let q;
-  if (f.q) { const [l, , d] = QTY_TYPES[f.q[0]][pick.lvl]; q = `${l} · ${d}`; }
+  if (f.per100) q = `${pick.gr} ${f.per100}`;
+  else if (f.q) { const [l, , d] = QTY_TYPES[f.q[0]][pick.lvl]; q = `${l} · ${d}`; }
   else {
     const size = SIZES.find(s => s[1] === pick.size)[0];
     q = `${qtyTxt(pick.qty)} ${portions(f)[pick.por][0]}${pick.size !== 1 ? ' · ' + size.toLowerCase() : ''}`;
@@ -471,17 +475,37 @@ function logRoutine(id) {
 }
 
 // ---------- Historial ----------
+// Período del resumen del Historial
+const HR_OPTS = [['7', '7 días'], ['14', '14 días'], ['30', '30 días'], ['90', '3 meses'], ['all', 'Todo'], ['custom', '📅 Elegir fechas']];
+const HR = { p: '7', from: null, to: null };
+function setHR(v, el) {
+  HR.p = v;
+  if (v === 'custom' && !HR.from) { HR.from = addDays(TODAY(), -13); HR.to = TODAY(); }
+  render();
+}
+function histRange() {
+  const t = TODAY();
+  if (HR.p === 'all') return { from: Object.keys(S.days).sort()[0] || t, to: t };
+  if (HR.p === 'custom') { const a = HR.from || t, b = HR.to || t; return a <= b ? { from: a, to: b } : { from: b, to: a }; }
+  return { from: addDays(t, -(+HR.p - 1)), to: t };
+}
 function viewHist() {
   const days = [];
   for (let i = 0; i < 30; i++) { const d = addDays(TODAY(), -i); const D = S.days[d]; if (D && (D.foods.length || D.ex.length)) days.push(d); }
-  const week = days.filter(d => d >= addDays(TODAY(), -6) && S.days[d].foods.length);
-  const wb = week.reduce((a, d) => a + calc(d).bal, 0);
+  const { from, to } = histRange();
+  const span = [];
+  for (let d = from; d <= to; d = addDays(d, 1)) if (S.days[d]?.foods.length) span.push(d);
+  const T = span.map(d => calc(d)), n = span.length || 1;
+  const wb = T.reduce((a, t) => a + t.bal, 0);
   const W = weightTrend().reverse();
   let h = `<h2>Historial</h2>
+    <div class="chips scroll">${HR_OPTS.map(([v, l]) => chip(l, v === HR.p, `setHR('${v}',this)`)).join('')}</div>
+    ${HR.p === 'custom' ? `<div class="row gap"><label class="fl">Desde<input type="date" value="${from}" max="${TODAY()}" onchange="HR.from=this.value;render()"></label><label class="fl">Hasta<input type="date" value="${to}" max="${TODAY()}" onchange="HR.to=this.value;render()"></label></div>` : ''}
     <section class="card hero">
-      <div class="muted">Últimos 7 días (${week.length} con comidas registradas)</div>
+      <div class="muted">${HR.p === 'custom' || HR.p === 'all' ? `${shortDate(from)} – ${shortDate(to)}` : HR_OPTS.find(o => o[0] === HR.p)[1].replace(/^(\d)/, 'Últimos $1')} · ${span.length} día${span.length === 1 ? '' : 's'} con comidas registradas</div>
       <div class="big ${wb <= 0 ? '' : 'neg'}">${wb > 0 ? '+' : ''}${fmt(wb)}</div>
       <div class="muted">kcal de balance ≈ ${wb > 0 ? '+' : ''}${(wb / 7700).toFixed(2).replace('.', ',')} kg de grasa</div>
+      ${span.length ? `<div class="grid3"><div><b>${fmt(T.reduce((a, t) => a + t.eat.k, 0) / n)}</b><span>Comiste / día</span></div><div><b>${fmt(T.reduce((a, t) => a + t.burn, 0) / n)}</b><span>Gastaste / día</span></div><div><b class="${wb <= 0 ? 'pos' : 'neg'}">${wb > 0 ? '+' : ''}${fmt(wb / n)}</b><span>Balance / día</span></div></div>` : ''}
     </section>
     <section class="card"><h3>Balance diario (14 días)</h3>${chartBalance()}</section>
     ${drinksCard()}

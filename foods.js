@@ -274,6 +274,45 @@ const FOODS_RAW = [
   ['Shot de vodka', 'shot (40 ml)', 88, 0, 0, 0, [], 'cachito'],
   ['Shot de Jäger', 'shot (40 ml)', 103, 0, 7, 0, [], 'jagermeister'],
   ['Jägerbomb', 'unidad', 160, 0, 21, 0, [], 'jager energetica'],
+
+  // Ingredientes por 100 g (o 100 ml) para la calculadora por gramos. Valores aprox. tipo USDA / tablas de composición.
+  '#Ingredientes',
+  ['Lechuga', '100 g', 15, 1.4, 2.9, 0.2, [], ''], ['Tomate (crudo)', '100 g', 18, 0.9, 3.9, 0.2, [], ''],
+  ['Pepino', '100 g', 15, 0.7, 3.6, 0.1, [], ''], ['Zanahoria', '100 g', 41, 0.9, 9.6, 0.2, [], ''],
+  ['Cebolla', '100 g', 40, 1.1, 9.3, 0.1, [], ''], ['Palta (pulpa)', '100 g', 160, 2, 8.5, 14.7, [], 'aguacate'],
+  ['Repollo', '100 g', 25, 1.3, 5.8, 0.1, [], ''], ['Brócoli (cocido)', '100 g', 35, 2.4, 7.2, 0.4, [], 'brocoli'],
+  ['Zapallo (cocido)', '100 g', 20, 0.7, 4.9, 0.1, [], 'calabaza'], ['Zapallo italiano', '100 g', 17, 1.2, 3.1, 0.3, [], 'zucchini'],
+  ['Espinaca', '100 g', 23, 2.9, 3.6, 0.4, [], ''], ['Acelga', '100 g', 19, 1.8, 3.7, 0.2, [], ''],
+  ['Betarraga (cocida)', '100 g', 44, 1.7, 10, 0.2, [], 'remolacha'], ['Choclo (granos cocidos)', '100 g', 96, 3.4, 21, 1.5, [], 'maiz'],
+  ['Pimentón', '100 g', 26, 1, 6, 0.3, [], 'pimiento'], ['Champiñones', '100 g', 22, 3.1, 3.3, 0.3, [], 'hongos'],
+  ['Porotos verdes (cocidos)', '100 g', 35, 1.9, 7.9, 0.3, [], ''], ['Apio', '100 g', 16, 0.7, 3, 0.2, [], ''],
+  ['Arroz blanco (cocido)', '100 g', 130, 2.7, 28, 0.3, [], 'arroz'], ['Arroz integral (cocido)', '100 g', 112, 2.3, 24, 0.8, [], 'arroz'],
+  ['Fideos (cocidos)', '100 g', 158, 5.8, 31, 0.9, [], 'tallarines pasta'], ['Papa (cocida)', '100 g', 87, 1.9, 20, 0.1, [], 'papas'],
+  ['Papas fritas', '100 g', 312, 3.4, 41, 15, [], ''], ['Puré de papas', '100 g', 106, 1.9, 16, 4.2, [], 'pure'],
+  ['Camote (cocido)', '100 g', 90, 2, 21, 0.2, [], 'batata'], ['Quinoa (cocida)', '100 g', 120, 4.4, 21, 1.9, [], 'quinua'],
+  ['Mote (cocido)', '100 g', 110, 3, 23, 0.5, [], ''], ['Avena (cruda)', '100 g', 389, 16.9, 66, 6.9, [], ''],
+  ['Pan (marraqueta / hallulla)', '100 g', 275, 8.5, 54, 3, [], 'pan'], ['Pan de molde', '100 g', 265, 9, 49, 3.2, [], 'pan'],
+  ['Porotos (cocidos)', '100 g', 127, 8.7, 22.8, 0.5, [], 'frijoles'], ['Lentejas (cocidas)', '100 g', 116, 9, 20, 0.4, [], ''],
+  ['Garbanzos (cocidos)', '100 g', 164, 8.9, 27, 2.6, [], ''],
+  ['Pollo, pechuga (cocida)', '100 g', 165, 31, 0, 3.6, [], 'pollo'], ['Pollo, trutro con piel (cocido)', '100 g', 230, 25, 0, 14, [], 'pollo pierna'],
+  ['Vacuno magro (cocido)', '100 g', 200, 30, 0, 8, [], 'carne bistec posta'], ['Vacuno graso / asado (cocido)', '100 g', 290, 25, 0, 21, [], 'carne'],
+  ['Carne molida (cocida)', '100 g', 250, 26, 0, 16, [], 'carne'], ['Cerdo (cocido)', '100 g', 230, 27, 0, 13, [], 'chancho'],
+  ['Merluza / reineta (cocida)', '100 g', 90, 19, 0, 1.3, [], 'pescado'], ['Salmón (cocido)', '100 g', 206, 22, 0, 12, [], 'pescado'],
+  ['Atún en agua (escurrido)', '100 g', 116, 26, 0, 0.8, [], 'atun'], ['Huevo', '100 g', 143, 12.6, 0.7, 9.5, [], ''],
+  ['Jamón', '100 g', 120, 18, 1.5, 4.5, [], ''], ['Queso gauda / mantecoso', '100 g', 356, 25, 2, 27, [], 'queso'],
+  ['Queso fresco / quesillo', '100 g', 175, 13, 3, 12, [], 'queso'], ['Tofu', '100 g', 76, 8, 1.9, 4.8, [], ''],
+  ['Leche entera', '100 ml', 60, 3.2, 4.8, 3.2, [], ''], ['Leche descremada', '100 ml', 34, 3.4, 5, 0.1, [], ''],
+  ['Yogur natural', '100 g', 61, 3.5, 4.7, 3.3, [], 'yogurt'],
+  ['Manzana', '100 g', 52, 0.3, 14, 0.2, [], ''], ['Plátano', '100 g', 89, 1.1, 23, 0.3, [], ''],
+  ['Naranja', '100 g', 47, 0.9, 12, 0.1, [], ''], ['Frutillas', '100 g', 32, 0.7, 7.7, 0.3, [], ''],
+  ['Uvas', '100 g', 69, 0.7, 18, 0.2, [], ''], ['Pera', '100 g', 57, 0.4, 15, 0.1, [], ''],
+  ['Sandía', '100 g', 30, 0.6, 7.6, 0.2, [], ''], ['Melón', '100 g', 34, 0.8, 8.2, 0.2, [], ''],
+  ['Kiwi', '100 g', 61, 1.1, 15, 0.5, [], ''], ['Durazno', '100 g', 39, 0.9, 9.5, 0.3, [], ''], ['Piña', '100 g', 50, 0.5, 13, 0.1, [], ''],
+  ['Aceite', '100 ml', 884, 0, 0, 100, [], 'oliva'], ['Mantequilla', '100 g', 717, 0.9, 0.1, 81, [], ''],
+  ['Mayonesa', '100 g', 680, 1, 0.6, 75, [], ''], ['Azúcar', '100 g', 387, 0, 100, 0, [], ''],
+  ['Maní', '100 g', 567, 26, 16, 49, [], ''], ['Almendras', '100 g', 579, 21, 22, 50, [], ''], ['Nueces', '100 g', 654, 15, 14, 65, [], ''],
+  ['Chocolate de leche', '100 g', 535, 7.7, 59, 30, [], ''], ['Manjar', '100 g', 315, 7, 55, 7, [], 'dulce de leche'],
+  ['Proteína whey (polvo)', '100 g', 400, 80, 8, 6, [], 'proteina'],
 ];
 
 // Cantidad "al ojo" (un poco / más o menos / harto) para lo que no se cuenta por unidad.
@@ -320,6 +359,7 @@ const FOOD_CATS = [
   ['Acompañamientos', '🍚 Acompañamientos'], ['Ensaladas y verduras', '🥗 Ensaladas'], ['Carnes, pollo y pescado', '🍗 Carnes y pescados'],
   ['Platos caseros chilenos', '🍲 Platos caseros'], ['Comida rápida y "picoteo"', '🌭 Comida rápida'], ['Frutas', '🍎 Frutas'],
   ['Dulces y snacks', '🍫 Dulces y snacks'], ['Salsas y aderezos', '🧂 Salsas'], ['Bebidas', '🥤 Bebidas'], ['Copete', '🍻 Copete'],
+  ['Ingredientes', '🧮 Por gramos'],
 ];
 // Qué categorías mostrar primero según la comida del día
 const MEAL_CATS = {
@@ -341,6 +381,7 @@ FOODS_RAW.forEach(r => {
   if (HIDDEN.includes(f.n)) f.hidden = true;
   if (QTY_BY_NAME[f.n]) f.q = QTY_BY_NAME[f.n];
   if (ZERO[f.n]) f.zero = ZERO[f.n];
+  if (f.cat === 'Ingredientes') { f.per100 = f.u === '100 ml' ? 'ml' : 'g'; delete f.q; }
   FOODS.push(f);
 });
 const LIST_FOODS = FOODS.filter(f => !f.hidden); // lo que se muestra en listas (los ocultos siguen sirviendo para el historial)
