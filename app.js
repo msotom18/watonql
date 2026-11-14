@@ -181,32 +181,45 @@ function defaultMeal() {
   const h = new Date().getHours();
   return h < 11 ? 'des' : h < 16 ? 'alm' : h < 20 ? 'onc' : h < 23 ? 'cen' : 'sna';
 }
+let fCat = null; // null = sugeridos para la comida; 'mine' = mis alimentos; o una categoría de FOOD_CATS
+const mealName = m => MEALS.find(x => x[0] === m)[1];
 function openFood(meal) {
+  if ($('#sheet').classList.contains('hidden') || (meal && meal !== fMeal)) fCat = null; // al volver atrás se mantiene la categoría
   fMeal = meal || defaultMeal();
-  openSheet(head('Agregar comida') + `
+  const cats = [[null, `✨ Para ${mealName(fMeal).toLowerCase()}`], ...(S.custom.length ? [['mine', '⭐ Mis alimentos']] : []), ...FOOD_CATS];
+  openSheet(head(`Agregar a ${mealName(fMeal).toLowerCase()}`) + `
     <input id="q" type="search" placeholder="Buscar: arroz, pollo, pizza…" oninput="foodList()" autocomplete="off">
     <div class="row gap"><button class="btn sec" onclick="openScan()">📷 Escanear código</button><button class="btn sec" onclick="customForm()">✏️ Crear / rápido</button></div>
+    <div class="chips scroll">${cats.map(([k, l]) => chip(l, k === fCat, `setCat(${k === null ? 'null' : `'${k.replace(/"/g, '&quot;')}'`},this)`)).join('')}</div>
     <div id="flist"></div>`);
   foodList();
 }
-function recents() {
+function setCat(k, el) { fCat = k; setOn(el); $('#q').value = ''; foodList(); $('#flist').scrollIntoView({ block: 'nearest' }); }
+// Lo último que registraste en esa comida (desayuno, once…), sin repetir
+function recents(meal) {
   const seen = new Set(), out = [];
   Object.keys(S.days).sort().reverse().forEach(d => S.days[d].foods.slice().reverse().forEach(f => {
-    if (f.ref && !seen.has(f.ref)) { seen.add(f.ref); const x = findFood(f.ref); if (x) out.push(x); }
+    if (f.ref && f.meal === meal && !seen.has(f.ref)) { seen.add(f.ref); const x = findFood(f.ref); if (x) out.push(x); }
   }));
   return out.slice(0, 10);
 }
+const catLabel = k => FOOD_CATS.find(c => c[0] === k)[1];
 function foodRow(f) {
   return `<button class="item btnitem" onclick="pickFood('${f.id}')"><div class="grow"><div>${esc(f.n)}${f.id[0] === 'c' ? ' <span class="tag">mío</span>' : ''}${f.sellos?.length ? ` <span class="tag sel">⬣ ${f.sellos.length} sello${f.sellos.length > 1 ? 's' : ''}</span>` : ''}</div><div class="small muted">1 ${esc(f.u)}</div></div><div class="kc">${fmt(f.k)}</div></button>`;
 }
 function foodList() {
   const q = norm($('#q').value.trim());
   let h = '';
-  if (!q) {
+  if (!q && fCat === 'mine') {
+    h = S.custom.map(foodRow).join('');
+  } else if (!q && fCat) {
+    h = FOODS.filter(f => f.cat === fCat).map(foodRow).join('');
+  } else if (!q) {
     if (S.combos.length) h += `<div class="label">Mis combos · se agregan completos</div>` + S.combos.map(comboRow).join('');
-    const rec = recents();
-    if (rec.length) h += `<div class="label">Recientes</div>` + rec.map(foodRow).join('');
-    h += `<div class="label">Todos</div>` + allFoods().map(foodRow).join('');
+    const rec = recents(fMeal);
+    if (rec.length) h += `<div class="label">Lo que sueles comer en ${mealName(fMeal).toLowerCase()}</div>` + rec.map(foodRow).join('');
+    MEAL_CATS[fMeal].forEach(k => { h += `<div class="label">${catLabel(k)}</div>` + FOODS.filter(f => f.cat === k).map(foodRow).join(''); });
+    h += `<p class="small muted center">¿No está? Búscalo arriba o elige otra categoría.</p>`;
   } else {
     const words = q.split(/\s+/);
     const combos = S.combos.filter(c => words.every(w => norm(c.n).includes(w)));

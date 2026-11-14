@@ -1,7 +1,7 @@
 // Base de alimentos chilenos. Valores aproximados por 1 porción "normal" (al ojo).
 // [nombre, porción, kcal, proteína g, carbohidratos g, grasa g, otras porciones [[nombre, factor]], sinónimos]
 const FOODS_RAW = [
-  // Panes y masas
+  '#Panes y masas',
   ['Marraqueta', 'unidad', 270, 8.5, 56, 1.5, [['media marraqueta', 0.5]], 'pan batido pan frances'],
   ['Hallulla', 'unidad', 280, 7.5, 50, 5.5, [['media hallulla', 0.5]], 'pan'],
   ['Pan amasado', 'unidad', 330, 8, 52, 10, [['medio', 0.5]], 'pan casero'],
@@ -19,7 +19,7 @@ const FOODS_RAW = [
   ['Humita', 'unidad', 280, 6, 40, 11, [], 'choclo'],
   ['Tortilla de rescoldo', 'trozo', 250, 6, 45, 5, [], 'pan campo'],
 
-  // Desayuno y once
+  '#Desayuno y once',
   ['Avena con leche', 'taza', 250, 11, 35, 7, [], 'porridge'],
   ['Avena en hojuelas (cruda)', 'cucharada', 40, 1.5, 7, 0.7, [['taza', 7.5]], 'quaker'],
   ['Cereal de caja', 'taza', 150, 2.5, 33, 1.5, [], 'chocapic zucaritas corn flakes'],
@@ -45,7 +45,7 @@ const FOODS_RAW = [
   ['Café con leche', 'taza', 90, 4, 7, 4, [], 'cortado latte nescafe'],
   ['Leche con chocolate', 'taza', 220, 8, 30, 8, [], 'milo nesquik cola cao'],
 
-  // Lácteos
+  '#Lácteos',
   ['Leche entera', 'vaso', 150, 8, 12, 8, [], ''],
   ['Leche semidescremada', 'vaso', 115, 8, 12, 4, [], ''],
   ['Leche descremada', 'vaso', 85, 8, 12, 0.5, [], 'leche light'],
@@ -53,7 +53,7 @@ const FOODS_RAW = [
   ['Yogur protein / griego', 'pote', 110, 15, 8, 2, [], 'yogurt proteina'],
   ['Leche con plátano', 'vaso', 250, 9, 38, 7, [], 'batido licuado'],
 
-  // Acompañamientos
+  '#Acompañamientos',
   ['Arroz', 'plato', 260, 5, 57, 0.5, [['taza', 0.6], ['cucharada', 0.1]], 'arroz graneado blanco'],
   ['Tallarines / fideos', 'plato', 345, 12, 70, 2, [['taza', 0.5]], 'pasta spaghetti corbatitas'],
   ['Papas cocidas', 'unidad mediana', 130, 3, 30, 0.2, [['plato', 2]], 'papa'],
@@ -64,7 +64,7 @@ const FOODS_RAW = [
   ['Mote de trigo', 'taza', 180, 5, 38, 1, [], 'mote'],
   ['Quinoa', 'taza', 220, 8, 39, 3.5, [], 'quinua'],
 
-  // Ensaladas y verduras
+  '#Ensaladas y verduras',
   ['Ensalada chilena', 'plato', 90, 1.5, 9, 6, [], 'tomate cebolla'],
   ['Ensalada de lechuga (sin aliño)', 'plato', 30, 1.5, 5, 0.3, [], 'lechuga'],
   ['Ensalada surtida con aliño', 'plato', 150, 3, 10, 11, [], 'repollo zanahoria betarraga'],
@@ -73,7 +73,7 @@ const FOODS_RAW = [
   ['Betarraga', 'porción', 60, 2, 13, 0.2, [], 'remolacha'],
   ['Pebre', 'cucharada', 15, 0.2, 1, 1.2, [], 'chancho en piedra'],
 
-  // Carnes, pollo y pescado
+  '#Carnes, pollo y pescado',
   ['Pechuga de pollo a la plancha', 'filete', 250, 46, 0, 5.5, [['medio filete', 0.5]], 'pollo plancha'],
   ['Pollo asado', 'presa', 300, 30, 0, 20, [['1/4 de pollo', 1.6]], 'pollo horno trutro'],
   ['Pollo apanado / frito', 'presa', 320, 25, 12, 19, [], 'broaster nuggets'],
@@ -101,7 +101,7 @@ const FOODS_RAW = [
   ['Proteína en polvo (whey)', 'scoop', 120, 24, 3, 1.5, [], 'batido proteina'],
   ['Tofu', 'porción', 150, 16, 4, 9, [], ''],
 
-  // Platos caseros chilenos
+  '#Platos caseros chilenos',
   ['Porotos con riendas', 'plato', 450, 20, 70, 9, [], 'porotos tallarines'],
   ['Porotos granados', 'plato', 400, 18, 60, 10, [], 'porotos zapallo'],
   ['Lentejas', 'plato', 290, 20, 50, 1, [['con arroz', 1.4]], 'legumbres'],
@@ -123,7 +123,7 @@ const FOODS_RAW = [
   ['Sopa / crema de verduras', 'plato', 140, 4, 20, 5, [], 'crema zapallo'],
   ['Pollo con arroz y ensalada (casero)', 'plato', 550, 45, 60, 13, [], 'almuerzo casino'],
 
-  // Comida rápida y "picoteo"
+  '#Comida rápida y "picoteo"',
   ['Completo italiano', 'unidad', 450, 13, 35, 28, [], 'hot dog palta tomate mayo'],
   ['Completo (tomate y mayo)', 'unidad', 400, 12, 35, 23, [], 'hot dog'],
   ['Completo dinámico', 'unidad', 500, 14, 38, 32, [], 'hot dog chucrut americana'],
@@ -147,7 +147,7 @@ const FOODS_RAW = [
   ['Arrollado primavera', 'unidad', 200, 5, 20, 11, [], 'comida china'],
   ['Tacos', 'unidad', 180, 9, 15, 9, [], 'mexicano'],
 
-  // Frutas
+  '#Frutas',
   ['Manzana', 'unidad', 95, 0.5, 25, 0.3, [], ''],
   ['Plátano', 'unidad', 105, 1.3, 27, 0.4, [], 'banana'],
   ['Naranja', 'unidad', 62, 1.2, 15, 0.2, [], ''],
@@ -168,7 +168,7 @@ const FOODS_RAW = [
   ['Ensalada de frutas', 'taza', 90, 1, 22, 0.3, [], 'macedonia'],
   ['Pasas', 'puñado', 130, 1.3, 34, 0.2, [], ''],
 
-  // Dulces y snacks
+  '#Dulces y snacks',
   ['Kuchen', 'trozo', 330, 4, 45, 15, [], 'kuchen'],
   ['Torta (mil hojas, tres leches…)', 'trozo', 400, 6, 50, 19, [], 'pastel cumpleaños'],
   ['Pie de limón', 'trozo', 350, 4, 50, 15, [], 'pie'],
@@ -192,14 +192,14 @@ const FOODS_RAW = [
   ['Mote con huesillo', 'vaso', 300, 3, 72, 0.5, [], 'huesillo'],
   ['Cabritas', 'taza', 55, 1.5, 6, 3, [['bolsa microondas', 7]], 'pop corn palomitas'],
 
-  // Salsas y aderezos
+  '#Salsas y aderezos',
   ['Aceite', 'cucharada', 120, 0, 0, 14, [['cucharadita', 0.33]], 'oliva'],
   ['Mayonesa', 'cucharada', 95, 0, 0, 10, [], 'mayo'],
   ['Kétchup', 'cucharada', 20, 0, 5, 0, [], 'ketchup'],
   ['Mostaza / ají', 'cucharadita', 5, 0.2, 0.5, 0.2, [], 'aji'],
   ['Salsa americana / chucrut', 'cucharada', 25, 0.2, 2, 2, [], ''],
 
-  // Bebidas
+  '#Bebidas',
   ['Bebida', 'vaso / lata', 140, 0, 39, 0, [['botella 500 ml', 1.45], ['botella 1,5 L', 4.3]], 'coca cola fanta sprite gaseosa'],
   ['Bebida zero / light', 'vaso / lata', 1, 0, 0, 0, [], 'coca zero'],
   ['Jugo natural', 'vaso', 110, 1, 26, 0.3, [], 'jugo'],
@@ -213,6 +213,26 @@ const FOODS_RAW = [
   ['Terremoto', 'vaso', 400, 0.5, 45, 4, [], 'pipeño helado'],
 ];
 
-const FOODS = FOODS_RAW.map((r, i) => ({
-  id: 'db' + i, n: r[0], u: r[1], k: r[2], p: r[3], c: r[4], f: r[5], alt: r[6] || [], syn: r[7] || ''
-}));
+// Categorías (las líneas '#...' de arriba) con su nombre visible
+const FOOD_CATS = [
+  ['Panes y masas', '🥖 Panes'], ['Desayuno y once', '☕ Desayuno y once'], ['Lácteos', '🥛 Lácteos'],
+  ['Acompañamientos', '🍚 Acompañamientos'], ['Ensaladas y verduras', '🥗 Ensaladas'], ['Carnes, pollo y pescado', '🍗 Carnes y pescados'],
+  ['Platos caseros chilenos', '🍲 Platos caseros'], ['Comida rápida y "picoteo"', '🌭 Comida rápida'], ['Frutas', '🍎 Frutas'],
+  ['Dulces y snacks', '🍫 Dulces y snacks'], ['Salsas y aderezos', '🧂 Salsas'], ['Bebidas', '🥤 Bebidas y tragos'],
+];
+// Qué categorías mostrar primero según la comida del día
+const MEAL_CATS = {
+  des: ['Desayuno y once', 'Panes y masas', 'Lácteos', 'Frutas', 'Bebidas'],
+  onc: ['Desayuno y once', 'Panes y masas', 'Lácteos', 'Dulces y snacks', 'Bebidas'],
+  alm: ['Platos caseros chilenos', 'Carnes, pollo y pescado', 'Acompañamientos', 'Ensaladas y verduras', 'Comida rápida y "picoteo"', 'Bebidas'],
+  cen: ['Platos caseros chilenos', 'Carnes, pollo y pescado', 'Acompañamientos', 'Ensaladas y verduras', 'Comida rápida y "picoteo"', 'Bebidas'],
+  sna: ['Frutas', 'Dulces y snacks', 'Lácteos', 'Bebidas'],
+};
+
+// El id (db0, db1…) cuenta solo alimentos, así no cambia al agregar categorías
+const FOODS = [];
+let _cat = '';
+FOODS_RAW.forEach(r => {
+  if (typeof r === 'string') { _cat = r.slice(1); return; }
+  FOODS.push({ id: 'db' + FOODS.length, n: r[0], u: r[1], k: r[2], p: r[3], c: r[4], f: r[5], alt: r[6] || [], syn: r[7] || '', cat: _cat });
+});

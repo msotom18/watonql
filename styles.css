@@ -147,3 +147,6 @@ textarea:focus { border-color: var(--accent); }
 .actions button { background: none; border: 0; padding: 4px 0; color: var(--accent); font-size: .85rem; cursor: pointer; }
 .btnitem.plain { border: 0; padding: 0; }
 .card.warn { border-color: var(--c); }
+.chips.scroll { flex-wrap: nowrap; overflow-x: auto; margin: 0 -16px 4px; padding: 2px 16px 8px; scrollbar-width: none; }
+.chips.scroll::-webkit-scrollbar { display: none; }
+.chips.scroll .chip { white-space: nowrap; flex: none; }
