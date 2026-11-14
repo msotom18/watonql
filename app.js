@@ -2,7 +2,7 @@
 const KEY = 'watonql.v1';
 let S;
 try { S = JSON.parse(localStorage.getItem(KEY)) || {}; } catch { S = {}; }
-S.days ||= {}; S.custom ||= []; S.weights ||= []; S.combos ||= [];
+S.days ||= {}; S.custom ||= []; S.weights ||= []; S.combos ||= []; S.myRoutines ||= [];
 const save = () => localStorage.setItem(KEY, JSON.stringify(S));
 
 // ---------- Utilidades ----------
@@ -126,8 +126,8 @@ function viewHoy() {
   });
 
   h += `<section class="card"><div class="row"><h3>🏃 Ejercicio</h3><span class="muted">${fmt(t.ex)} kcal</span></div>
-    ${t.D.ex.map((e, i) => `<div class="item"><div class="grow"><div>${esc(e.n)}</div><div class="small muted">${e.min ? e.min + ' min' : 'manual'}</div></div><div class="kc pos">-${fmt(e.k)}</div><button class="x" onclick="delEx(${i})" aria-label="Eliminar">×</button></div>`).join('')}
-    <div class="row gap"><button class="add" onclick="openEx()">+ Agregar ejercicio</button><button class="add" onclick="goTab('rutinas')">🏠 Rutinas en casa</button></div></section>`;
+    ${t.D.ex.map((e, i) => `<div class="item"><div class="grow"><div>${esc(e.n)}</div><div class="small muted">${esc(exDesc(e))}</div></div><div class="kc pos">-${fmt(e.k)}</div><button class="x" onclick="delEx(${i})" aria-label="Eliminar">×</button></div>`).join('')}
+    <div class="row gap"><button class="add" onclick="openEx()">+ Agregar ejercicio</button><button class="add" onclick="goTab('rutinas')">💪 Rutinas</button></div></section>`;
   return h;
 }
 function delFood(i) { getDay(cur).foods.splice(i, 1); save(); render(); }
@@ -364,7 +364,10 @@ function sellosHtml(f) {
 let exPick = null;
 function openEx() {
   openSheet(head('Agregar ejercicio') + `
-    <input id="qe" type="search" placeholder="Buscar: caminar, burpees, fútbol…" oninput="exList()" autocomplete="off">
+    <div class="label">💪 Por repeticiones y series (desliza)</div>
+    <div class="chips scroll">${REPEX.map(e => chip(esc(e.n), false, `openQuick('${e.x}')`)).join('')}</div>
+    <div class="label">⏱️ Por tiempo</div>
+    <input id="qe" type="search" placeholder="Buscar: caminar, pichanga, bici…" oninput="exList()" autocomplete="off">
     <div id="elist"></div>
     <div class="label">¿Te lo midió un reloj o app? Ingresa las kcal directo</div>
     <div class="row gap"><input id="exn" placeholder="Actividad"><input id="exk" type="number" class="mini" placeholder="kcal" inputmode="numeric"><button class="btn sm" onclick="addExManual()">+</button></div>`);
@@ -402,7 +405,14 @@ function addExManual() {
 
 // ---------- Rutinas ----------
 function viewRutinas() {
-  return `<h2>Rutinas en casa</h2><p class="small muted">Sin equipamiento. Toca una para ver los ejercicios y registrarla.</p>` +
+  return `<h2>Ejercicio en casa</h2>
+    <div class="row gap"><button class="btn" onclick="openRepList()">+ Registrar repeticiones</button><button class="btn sec" onclick="newRoutine()">➕ Crear rutina</button></div>
+    ${totalsCard()}
+    ${S.myRoutines.length ? `<h3 class="sec-title">Mis rutinas</h3>` + S.myRoutines.map(r => {
+      const s = routineStats(r);
+      return `<button class="card rcard" onclick="openMyRoutine('${r.id}')"><span class="emoji">🏋️</span><div class="grow"><b>${esc(r.n)}</b><div class="small muted">${esc(r.items.map(it => repex(it.x).n).join(', '))}</div><div class="small muted">${s.sets} series · ~${s.min} min · ≈ ${fmt(s.k)} kcal</div></div><span class="muted">›</span></button>`;
+    }).join('') : ''}
+    <h3 class="sec-title">Rutinas sugeridas</h3><p class="small muted">Sin equipamiento. Toca una para ver los ejercicios y registrarla.</p>` +
     ROUTINES.map(r => `<button class="card rcard" onclick="openRoutine('${r.id}')"><span class="emoji">${r.emoji}</span><div class="grow"><b>${r.n}</b><div class="small muted">${r.min} min · ≈ ${fmt(exK(r.met, r.min))} kcal</div></div><span class="muted">›</span></button>`).join('');
 }
 function openRoutine(id) {
@@ -421,7 +431,7 @@ function logRoutine(id) {
   const r = ROUTINES.find(x => x.id === id), min = +$('#rmin').value;
   if (!(min > 0)) return toast('Pon los minutos');
   const k = R(exK(r.met, min));
-  ensureDay(cur).ex.push({ n: 'Rutina: ' + r.n, min, k });
+  ensureDay(cur).ex.push({ n: 'Rutina: ' + r.n, min, k, items: presetItems(r) });
   save(); closeSheet(); toast(`¡Bien! -${k} kcal`); openDay(cur);
 }
 
@@ -536,7 +546,7 @@ async function importData(file) {
     const d = JSON.parse(await file.text());
     if (!d.days || !d.profile) throw 0;
     if (!confirm('Esto reemplaza tus datos actuales. ¿Continuar?')) return;
-    S = d; S.custom ||= []; S.weights ||= []; S.combos ||= []; save(); render(); toast('Datos importados');
+    S = d; S.custom ||= []; S.weights ||= []; S.combos ||= []; S.myRoutines ||= []; save(); render(); toast('Datos importados');
   } catch { toast('Archivo inválido'); }
 }
 
