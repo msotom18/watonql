@@ -27,6 +27,18 @@
   </nav>
   <div id="sheet" class="sheet hidden"><div id="sheetBody" class="sheet-body"></div></div>
   <div id="toast" class="toast"></div>
+  <script>
+    // Si algo falla (por ejemplo en un teléfono antiguo), mostrarlo en pantalla en vez de quedar "congelado"
+    window.onerror = function (msg, src, line) {
+      var d = document.getElementById('fatal');
+      if (!d) {
+        d = document.createElement('div'); d.id = 'fatal';
+        d.style.cssText = 'position:fixed;left:8px;right:8px;top:8px;z-index:99;background:#b3261e;color:#fff;padding:10px 12px;border-radius:10px;font:13px/1.35 system-ui,sans-serif';
+        document.body.appendChild(d);
+      }
+      d.textContent = '⚠️ Error: ' + msg + ' (' + String(src || '').split('/').pop() + ':' + line + '). Saca una captura de este mensaje.';
+    };
+  </script>
   <script src="foods.js"></script>
   <script src="exercises.js"></script>
   <script src="adaptive.js"></script>

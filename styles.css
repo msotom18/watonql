@@ -82,7 +82,7 @@ input.mini { width: 90px; padding: 7px 10px; border-radius: 99px; }
 .tabs button.active { color: var(--accent); }
 .tabs button.active span { filter: none; opacity: 1; }
 
-.sheet { position: fixed; inset: 0; z-index: 10; background: rgba(0,0,0,.55); display: flex; align-items: flex-end; justify-content: center; }
+.sheet { position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 10; background: rgba(0,0,0,.55); display: flex; align-items: flex-end; justify-content: center; }
 .sheet-body { width: 100%; max-width: 560px; max-height: 88vh; overflow-y: auto; background: var(--card); border-radius: 20px 20px 0 0; padding: 14px 16px calc(20px + env(safe-area-inset-bottom)); animation: up .2s ease-out; }
 @keyframes up { from { transform: translateY(40px); opacity: 0; } }
 .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; position: sticky; top: -14px; background: var(--card); padding: 6px 0; z-index: 1; }
@@ -113,7 +113,7 @@ textarea:focus { border-color: var(--accent); }
 .exd summary { cursor: pointer; }
 .exd p { margin: 8px 0 0; }
 .exanim { position: relative; width: 100%; max-width: 320px; aspect-ratio: 4 / 3; margin: 10px auto 0; border-radius: 12px; overflow: hidden; background: #fff; }
-.exanim img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.exanim img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; }
 .exanim img + img { animation: flip 1.6s steps(1) infinite; }
 @keyframes flip { 0% { opacity: 0; } 50% { opacity: 1; } }
 
@@ -182,3 +182,10 @@ button.hm-c { cursor: pointer; }
 .exday .small { margin-top: 3px; }
 .grid3.dist { gap: 8px; }
 .grid3.dist .fl { margin-top: 0; font-size: .8rem; }
+
+/* Respaldo para iPhone con iOS < 15 (sin aspect-ratio) */
+@supports not (aspect-ratio: 1) {
+  .exanim { height: 0; padding-top: 75%; }
+  .hm-c { height: 20px; }
+  .hm-legend i.hm-c { height: 11px; }
+}
