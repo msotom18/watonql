@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0e1116">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>watonql</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header id="top" class="top">
+    <button id="prevDay" onclick="moveDay(-1)" aria-label="Día anterior">‹</button>
+    <button id="dayLabel" class="daylabel" onclick="cur=TODAY();render()"></button>
+    <button id="nextDay" onclick="moveDay(1)" aria-label="Día siguiente">›</button>
+  </header>
+  <main id="view"></main>
+  <nav class="tabs">
+    <button data-tab="hoy" onclick="goTab('hoy')"><span>📊</span>Hoy</button>
+    <button data-tab="rutinas" onclick="goTab('rutinas')"><span>🏠</span>Rutinas</button>
+    <button data-tab="hist" onclick="goTab('hist')"><span>📈</span>Historial</button>
+    <button data-tab="perfil" onclick="goTab('perfil')"><span>👤</span>Perfil</button>
+  </nav>
+  <div id="sheet" class="sheet hidden"><div id="sheetBody" class="sheet-body"></div></div>
+  <div id="toast" class="toast"></div>
+  <script src="foods.js"></script>
+  <script src="exercises.js"></script>
+  <script src="adaptive.js"></script>
+  <script src="charts.js"></script>
+  <script src="timer.js"></script>
+  <script src="ai.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
