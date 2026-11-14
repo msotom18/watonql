@@ -419,6 +419,7 @@ function exList() {
 }
 function pickEx(id) {
   const e = EXERCISES.find(x => x.id === id);
+  if (PACE[e.n]) return pickDist(e); // correr, caminar, bici, trekking: km + minutos + kcal de tu app
   exPick = { e, min: 30, int: 1 };
   openSheet(head(esc(e.n), 'openEx()') + `
     <div class="label">Minutos</div><div class="chips">${[10, 15, 20, 30, 45, 60].map(m => chip(m, m === 30, `exSet('min',${m},this)`)).join('')}<input type="number" class="mini" placeholder="otro" inputmode="numeric" oninput="this.parentNode.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));exSet('min',+this.value||0)"></div>
@@ -446,6 +447,7 @@ function addExManual() {
 function viewRutinas() {
   return `<h2>Ejercicio en casa</h2>
     <div class="row gap"><button class="btn" onclick="openRepList()">+ Registrar repeticiones</button><button class="btn sec" onclick="newRoutine()">➕ Crear rutina</button></div>
+    ${exHistoryCard()}
     ${totalsCard()}
     ${S.myRoutines.length ? `<h3 class="sec-title">Mis rutinas</h3>` + S.myRoutines.map(r => {
       const s = routineStats(r);

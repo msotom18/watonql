@@ -163,3 +163,22 @@ textarea:focus { border-color: var(--accent); }
 .chips.lv .chip { display: flex; flex-direction: column; align-items: center; line-height: 1.15; padding: 8px 14px; flex: 1; }
 .chips.lv .chip small { font-size: .72rem; opacity: .8; font-weight: 400; margin-top: 2px; }
 .row.gap.tri .btn { padding: 11px 4px; font-size: .88rem; }
+
+/* Historial de ejercicio */
+.link { background: none; border: 0; color: var(--accent); font-size: .85rem; cursor: pointer; padding: 4px 0; }
+.hm { display: grid; grid-template-columns: 16px repeat(12, 1fr); gap: 3px; margin-top: 12px; }
+.hm-l { font-size: .62rem; color: var(--muted); line-height: 1; align-self: center; }
+.hm-c { display: block; aspect-ratio: 1; border-radius: 4px; border: 0; padding: 0; background: transparent; }
+button.hm-c { cursor: pointer; }
+.hm-c.l0 { background: var(--card2); } .hm-c.l1 { background: #23704a; } .hm-c.l2 { background: #2fa86a; } .hm-c.l3 { background: #3ddc84; }
+.hm-c.today { outline: 2px solid var(--text); outline-offset: -2px; }
+.hm-legend { display: flex; align-items: center; gap: 4px; font-size: .7rem; color: var(--muted); margin-top: 8px; }
+.hm-legend i.hm-c { width: 11px; height: 11px; display: inline-block; aspect-ratio: auto; }
+.stats { margin-top: 12px; text-align: center; }
+.stats b { display: block; font-size: 1.2rem; }
+.stats span { font-size: .75rem; color: var(--muted); }
+.stats-card { margin-top: 12px; }
+.exday { display: block; width: 100%; text-align: left; background: none; border: 0; border-top: 1px solid var(--line); padding: 10px 0; cursor: pointer; }
+.exday .small { margin-top: 3px; }
+.grid3.dist { gap: 8px; }
+.grid3.dist .fl { margin-top: 0; font-size: .8rem; }

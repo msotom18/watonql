@@ -38,6 +38,7 @@ function routineStats(r) {
   return { sets, min: Math.max(1, R((work + r.rest * Math.max(0, sets - 1)) / 60)), k: r.items.reduce((a, it) => a + itemKcal(it), 0) };
 }
 function exDesc(e) {
+  if (e.km) return `${fmtKm(e.km)} km · ${e.min} min · ${pace(e.min, e.km)} min/km${e.appK ? ' · app' : ''}`;
   if (e.items?.length) return (e.items.length === 1 ? itemTxt(e.items[0]) + (isSecs(e.items[0]) ? '' : ' reps') : `${e.items.length} ejercicios`) + (e.min ? ` · ${e.min} min` : '');
   return e.min ? e.min + ' min' : 'manual';
 }
